@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NSU CGPA Analyzer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        .header p { font-size: 14px; opacity: 0.9; }
+        .nav-buttons {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            display: flex;
+            gap: 10px;
+        }
+        .nav-btn {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .nav-btn:hover { background: white; color: #f5576c; }
+        .nav-btn.active { background: white; color: #f5576c; }
+        .content { padding: 30px; }
+        .info-box {
+            background: #fff5f5;
+            border-left: 4px solid #f5576c;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .info-box p { color: #742a2a; font-size: 14px; line-height: 1.6; margin-bottom: 8px; }
+        .info-box p:last-child { margin-bottom: 0; }
+        .form-section { margin-bottom: 30px; }
+        .form-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 20px;
+            border-bottom: 2px solid #f5576c;
+            padding-bottom: 10px;
+        }
+        .input-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .input-group { display: flex; flex-direction: column; }
+        .input-group label { font-weight: 600; color: #333; margin-bottom: 8px; font-size: 14px; }
+        .input-group input {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .input-group input:focus { outline: none; border-color: #f5576c; }
+        .quick-fill {
+            background: #e6f7ff;
+            border: 1px solid #91d5ff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .quick-fill p { font-size: 13px; color: #0050b3; margin-bottom: 8px; }
+        .quick-fill button {
+            padding: 8px 16px;
+            background: #1890ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .quick-fill button:hover { background: #096dd9; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        thead { background: #f5576c; color: white; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { font-weight: 600; }
+        tbody tr:hover { background: #fff5f5; }
+        input[type="text"] { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+        }
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; font-size: 14px; cursor: pointer; transition: all 0.3s; }
+        .btn-add { background: #48bb78; color: white; }
+        .btn-add:hover { background: #38a169; }
+        .btn-remove { background: #f56565; color: white; padding: 6px 12px; }
+        .btn-remove:hover { background: #e53e3e; }
+        .btn-analyze { background: #f5576c; color: white; font-size: 16px; padding: 12px 30px; }
+        .btn-analyze:hover { background: #e14361; }
+        .btn-clear { background: #fc8181; color: white; }
+        .btn-clear:hover { background: #f56565; }
+        .buttons { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .result-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 30px;
+            display: none;
+        }
+        .result-box.show { display: block; animation: slideDown 0.5s ease; }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .result-box h3 { font-size: 24px; margin-bottom: 20px; text-align: center; }
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .result-item { background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px; text-align: center; }
+        .result-item label { display: block; font-size: 12px; opacity: 0.9; margin-bottom: 5px; }
+        .result-item .value { font-size: 28px; font-weight: bold; }
+        .course-results { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; margin-top: 20px; }
+        .course-results h4 { margin-bottom: 15px; font-size: 18px; }
+        .course-result-item {
+            background: rgba(255,255,255,0.15);
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .course-result-item .course-info { flex: 1; }
+        .course-result-item .grade-needed {
+            background: rgba(255,255,255,0.3);
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .alert { padding: 15px; border-radius: 5px; margin-top: 20px; }
+        .alert-success { background: #c6f6d5; color: #22543d; border-left: 4px solid #38a169; }
+        .alert-warning { background: #fef5e7; color: #744210; border-left: 4px solid #dd6b20; }
+        .alert-error { background: #fed7d7; color: #742a2a; border-left: 4px solid #e53e3e; }
+        .grading-table { margin-top: 30px; }
+        .grading-table h2 { color: #333; margin-bottom: 15px; }
+        .grading-table table { background: #f7fafc; }
+        .grading-table thead { background: #4a5568; }
+        .grade-label { font-weight: bold; color: #f5576c; }
+        .footer { background: #2d3748; color: white; text-align: center; padding: 15px; font-size: 13px; }
+        @media (max-width: 768px) {
+            .nav-buttons { position: static; justify-content: center; margin-top: 15px; }
+            table { font-size: 12px; }
+            th, td { padding: 8px 4px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="nav-buttons">
+                <a href="calculator.html" class="nav-btn">Calculator</a>
+                <a href="analyzer.html" class="nav-btn active">Analyzer</a>
+            </div>
+            <h1>NSU CGPA Analyzer</h1>
+            <p>Calculate Targeted GPA - Plan Your Semester Strategically</p>
+        </div>
+
+        <div class="content">
+            <div class="info-box">
+                <p><strong>📌 How it works:</strong> CGPA Analyzer helps you determine what grades per course will be needed in current semester to achieve your targeted CGPA.</p>
+                <p><strong>💡 Tip:</strong> If you are on probation, set CGPA target <strong>2.0</strong>. This will help you find the minimum grade/points per course needed to overcome your probation.</p>
+            </div>
+
+            <div class="form-section">
+                <h2>📊 Current Status</h2>
+                
+                <div class="quick-fill" id="quickFillBox" style="display: none;">
+                    <p><strong>✨ Quick Fill:</strong> We found your data from the Calculator page!</p>
+                    <button onclick="quickFillData()">📋 Use Calculator Data</button>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="currentCGPA">Current CGPA</label>
+                        <input type="number" id="currentCGPA" placeholder="e.g., 3.25" step="0.01" min="0" max="4">
+                    </div>
+                    <div class="input-group">
+                        <label for="completedCredits">Completed Credits</label>
+                        <input type="number" id="completedCredits" placeholder="e.g., 90" step="1" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="targetCGPA">Target CGPA</label>
+                        <input type="number" id="targetCGPA" placeholder="e.g., 3.50" step="0.01" min="0" max="4">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>📚 Current Semester Courses</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Course</th>
+                            <th>Credits</th>
+                            <th>#</th>
+                        </tr>
+                    </thead>
+                    <tbody id="courseBody">
+                        <tr data-row="1">
+                            <td><input type="text" placeholder="e.g., CSE115" class="course-name"></td>
+                            <td>
+                                <select class="course-credits">
+                                    <option value="">-</option>
+                                    <option value="1">1</option>
+                                    <option value="1.5">1.5</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                            </td>
+                            <td><button class="btn btn-remove" onclick="removeRow(1)">Remove</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="buttons">
+                    <button class="btn btn-add" onclick="addRow()">+ Add Course</button>
+                    <button class="btn btn-analyze" onclick="analyzeCGPA()">🎯 Analyze CGPA</button>
+                    <button class="btn btn-clear" onclick="clearAll()">Clear All</button>
+                </div>
+            </div>
+
+            <div id="resultBox" class="result-box">
+                <h3>📈 Analysis Results</h3>
+                <div class="result-grid">
+                    <div class="result-item">
+                        <label>Current CGPA</label>
+                        <div class="value" id="resultCurrentCGPA">0.00</div>
+                    </div>
+                    <div class="result-item">
+                        <label>Target CGPA</label>
+                        <div class="value" id="resultTargetCGPA">0.00</div>
+                    </div>
+                    <div class="result-item">
+                        <label>Required GPA</label>
+                        <div class="value" id="resultRequiredGPA">0.00</div>
+                    </div>
+                    <div class="result-item">
+                        <label>Semester Credits</label>
+                        <div class="value" id="resultSemesterCredits">0</div>
+                    </div>
+                </div>
+
+                <div id="alertBox"></div>
+
+                <div class="course-results" id="courseResults">
+                    <h4>📋 Grades Needed Per Course:</h4>
+                    <div id="courseResultsList"></div>
+                </div>
+            </div>
+
+            <div class="grading-table">
+                <h2>📊 North South University - Grading System</h2>
+                <table>
+                    <thead>
+                        <tr><th>Scores</th><th>Grade</th><th>Points</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>93+</td><td><span class="grade-label">A</span> Excellent</td><td>4.0</td></tr>
+                        <tr><td>90 - 92</td><td><span class="grade-label">A-</span></td><td>3.7</td></tr>
+                        <tr><td>87 - 89</td><td><span class="grade-label">B+</span></td><td>3.3</td></tr>
+                        <tr><td>83 - 86</td><td><span class="grade-label">B</span> Good</td><td>3.0</td></tr>
+                        <tr><td>80 - 82</td><td><span class="grade-label">B-</span></td><td>2.7</td></tr>
+                        <tr><td>77 - 79</td><td><span class="grade-label">C+</span></td><td>2.3</td></tr>
+                        <tr><td>73 - 76</td><td><span class="grade-label">C</span> Average</td><td>2.0</td></tr>
+                        <tr><td>70 - 72</td><td><span class="grade-label">C-</span></td><td>1.7</td></tr>
+                        <tr><td>67 - 69</td><td><span class="grade-label">D+</span></td><td>1.3</td></tr>
+                        <tr><td>60 - 66</td><td><span class="grade-label">D</span> Poor</td><td>1.0</td></tr>
+                        <tr><td>Below 60</td><td><span class="grade-label">F</span> Failure</td><td>0.0</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer">
+            NSU CGPA Analyzer - Plan Your Academic Success
+        </div>
+    </div>
+
+    <script>
+        let rowCounter = 1;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const calculatorCGPA = localStorage.getItem('calculatorCGPA');
+            const calculatorCredits = localStorage.getItem('calculatorCredits');
+            
+            if (calculatorCGPA && calculatorCredits && parseFloat(calculatorCredits) > 0) {
+                document.getElementById('quickFillBox').style.display = 'block';
+            }
+        });
+
+        function quickFillData() {
+            const calculatorCGPA = localStorage.getItem('calculatorCGPA');
+            const calculatorCredits = localStorage.getItem('calculatorCredits');
+            
+            if (calculatorCGPA && calculatorCredits) {
+                document.getElementById('currentCGPA').value = calculatorCGPA;
+                document.getElementById('completedCredits').value = calculatorCredits;
+                
+                const quickFillBox = document.getElementById('quickFillBox');
+                quickFillBox.innerHTML = '<p style="color: #38a169;"><strong>✅ Data filled successfully!</strong></p>';
+                quickFillBox.style.background = '#c6f6d5';
+                quickFillBox.style.borderColor = '#38a169';
+                setTimeout(() => {
+                    quickFillBox.style.display = 'none';
+                }, 2000);
+            }
+        }
+
+        function addRow() {
+            rowCounter++;
+            const tbody = document.getElementById('courseBody');
+            const newRow = document.createElement('tr');
+            newRow.setAttribute('data-row', rowCounter);
+            newRow.innerHTML = `
+                <td><input type="text" placeholder="e.g., CSE115" class="course-name"></td>
+                <td>
+                    <select class="course-credits">
+                        <option value="">-</option>
+                        <option value="1">1</option>
+                        <option value="1.5">1.5</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </td>
+                <td><button class="btn btn-remove" onclick="removeRow(${rowCounter})">Remove</button></td>
+            `;
+            tbody.appendChild(newRow);
+        }
+
+        function removeRow(rowNum) {
+            const rows = document.querySelectorAll('#courseBody tr');
+            if (rows.length > 1) {
+                const row = document.querySelector(`tr[data-row="${rowNum}"]`);
+                if (row) row.remove();
+            } else {
+                alert('You must have at least one course row!');
+            }
+        }
+
+        function clearAll() {
+            if (confirm('Are you sure you want to clear all data?')) {
+                document.getElementById('currentCGPA').value = '';
+                document.getElementById('completedCredits').value = '';
+                document.getElementById('targetCGPA').value = '';
+                
+                const tbody = document.getElementById('courseBody');
+                tbody.innerHTML = `
+                    <tr data-row="1">
+                        <td><input type="text" placeholder="e.g., CSE115" class="course-name"></td>
+                        <td>
+                            <select class="course-credits">
+                                <option value="">-</option>
+                                <option value="1">1</option>
+                                <option value="1.5">1.5</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </td>
+                        <td><button class="btn btn-remove" onclick="removeRow(1)">Remove</button></td>
+                    </tr>
+                `;
+                rowCounter = 1;
+                document.getElementById('resultBox').classList.remove('show');
+            }
+        }
+
+        function getGradeFromPoints(points) {
+            if (points >= 3.85) return 'A (4.0)';
+            if (points >= 3.5) return 'A- (3.7)';
+            if (points >= 3.15) return 'B+ (3.3)';
+            if (points >= 2.85) return 'B (3.0)';
+            if (points >= 2.5) return 'B- (2.7)';
+            if (points >= 2.15) return 'C+ (2.3)';
+            if (points >= 1.85) return 'C (2.0)';
+            if (points >= 1.5) return 'C- (1.7)';
+            if (points >= 1.15) return 'D+ (1.3)';
+            if (points >= 0.5) return 'D (1.0)';
+            return 'F (0.0)';
+        }
+
+        function analyzeCGPA() {
+            const currentCGPA = parseFloat(document.getElementById('currentCGPA').value);
+            const completedCredits = parseFloat(document.getElementById('completedCredits').value);
+            const targetCGPA = parseFloat(document.getElementById('targetCGPA').value);
+
+            if (!currentCGPA || !completedCredits || !targetCGPA) {
+                alert('Please fill in Current CGPA, Completed Credits, and Target CGPA');
+                return;
+            }
+
+            if (currentCGPA < 0 || currentCGPA > 4 || targetCGPA < 0 || targetCGPA > 4) {
+                alert('CGPA values must be between 0 and 4');
+                return;
+            }
+
+            const rows = document.querySelectorAll('#courseBody tr');
+            const courses = [];
+            let semesterCredits = 0;
+
+            rows.forEach(row => {
+                const name = row.querySelector('.course-name').value || 'Unnamed Course';
+                const credits = parseFloat(row.querySelector('.course-credits').value);
+
+                if (credits) {
+                    courses.push({ name, credits });
+                    semesterCredits += credits;
+                }
+            });
+
+            if (courses.length === 0 || semesterCredits === 0) {
+                alert('Please add at least one course with credits');
+                return;
+            }
+
+            const currentTotalPoints = currentCGPA * completedCredits;
+            const targetTotalPoints = targetCGPA * (completedCredits + semesterCredits);
+            const requiredPoints = targetTotalPoints - currentTotalPoints;
+            const requiredGPA = requiredPoints / semesterCredits;
+
+            document.getElementById('resultCurrentCGPA').textContent = currentCGPA.toFixed(2);
+            document.getElementById('resultTargetCGPA').textContent = targetCGPA.toFixed(2);
+            document.getElementById('resultRequiredGPA').textContent = requiredGPA.toFixed(2);
+            document.getElementById('resultSemesterCredits').textContent = semesterCredits;
+
+            const alertBox = document.getElementById('alertBox');
+            const courseResultsList = document.getElementById('courseResultsList');
+            courseResultsList.innerHTML = '';
+
+            if (requiredGPA > 4.0) {
+                alertBox.innerHTML = `
+                    <div class="alert alert-error">
+                        <strong>❌ Target Not Achievable!</strong><br>
+                        You would need a GPA of ${requiredGPA.toFixed(2)} this semester, but the maximum is 4.0.<br>
+                        <strong>Maximum achievable CGPA:</strong> ${((currentTotalPoints + 4.0 * semesterCredits) / (completedCredits + semesterCredits)).toFixed(2)}
+                    </div>
+                `;
+                document.getElementById('courseResults').style.display = 'none';
+            } else if (requiredGPA < 0) {
+                alertBox.innerHTML = `
+                    <div class="alert alert-success">
+                        <strong>🎉 Congratulations!</strong><br>
+                        Your current CGPA (${currentCGPA.toFixed(2)}) already exceeds your target (${targetCGPA.toFixed(2)}).<br>
+                        You can maintain or aim for a higher target!
+                    </div>
+                `;
+                document.getElementById('courseResults').style.display = 'none';
+            } else {
+                if (requiredGPA >= 3.5) {
+                    alertBox.innerHTML = `
+                        <div class="alert alert-warning">
+                            <strong>⚠️ Challenging Goal!</strong><br>
+                            You need an average GPA of ${requiredGPA.toFixed(2)} this semester. This requires mostly A and A- grades.
+                        </div>
+                    `;
+                } else if (requiredGPA <= 2.0) {
+                    alertBox.innerHTML = `
+                        <div class="alert alert-success">
+                            <strong>✅ Achievable Goal!</strong><br>
+                            You need an average GPA of ${requiredGPA.toFixed(2)} this semester. This is very achievable with consistent effort!
+                        </div>
+                    `;
+                } else {
+                    alertBox.innerHTML = `
+                        <div class="alert alert-success">
+                            <strong>✅ Realistic Goal!</strong><br>
+                            You need an average GPA of ${requiredGPA.toFixed(2)} this semester. Focus on ${getGradeFromPoints(requiredGPA)} grades.
+                        </div>
+                    `;
+                }
+
+                document.getElementById('courseResults').style.display = 'block';
+                courses.forEach(course => {
+                    const gradeNeeded = getGradeFromPoints(requiredGPA);
+                    const div = document.createElement('div');
+                    div.className = 'course-result-item';
+                    div.innerHTML = `
+                        <div class="course-info">
+                            <strong>${course.name}</strong> (${course.credits} credits)
+                        </div>
+                        <div class="grade-needed">${gradeNeeded}</div>
+                    `;
+                    courseResultsList.appendChild(div);
+                });
+            }
+
+            document.getElementById('resultBox').classList.add('show');
+            document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    </script>
+</body>
+</html>

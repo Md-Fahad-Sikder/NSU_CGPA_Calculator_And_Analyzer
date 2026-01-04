@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NSU CGPA Tools - Calculator & Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 50px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.95;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .content {
+            padding: 50px 30px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .tool-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 35px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            border: 3px solid transparent;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+
+        .tool-card.calculator {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .tool-card.analyzer {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .tool-icon {
+            font-size: 70px;
+            margin-bottom: 20px;
+        }
+
+        .tool-card h2 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .tool-card p {
+            font-size: 15px;
+            line-height: 1.6;
+            opacity: 0.95;
+            margin-bottom: 20px;
+        }
+
+        .tool-card .btn {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            padding: 12px 30px;
+            border: 2px solid white;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .tool-card:hover .btn {
+            background: white;
+            color: #667eea;
+        }
+
+        .tool-card.analyzer:hover .btn {
+            color: #f5576c;
+        }
+
+        .features {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .features h3 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 15px;
+        }
+
+        .feature-item .icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .feature-item h4 {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .feature-item p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+
+        .info-box h4 {
+            color: #1976D2;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: #424242;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .footer {
+            background: #2d3748;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 32px;
+            }
+
+            .header p {
+                font-size: 16px;
+            }
+
+            .tool-card h2 {
+                font-size: 24px;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🎓</div>
+            <h1>NSU CGPA Tools</h1>
+            <p>Calculate your CGPA and plan your academic success with our comprehensive tools designed for North South University students</p>
+        </div>
+
+        <div class="content">
+            <div class="tools-grid">
+                <a href="calculator.html" class="tool-card calculator">
+                    <div class="tool-icon">🧮</div>
+                    <h2>CGPA Calculator</h2>
+                    <p>Calculate your current CGPA based on all your completed courses. Track your academic progress and see your overall performance.</p>
+                    <div class="btn">Open Calculator</div>
+                </a>
+
+                <a href="analyzer.html" class="tool-card analyzer">
+                    <div class="tool-icon">🎯</div>
+                    <h2>CGPA Analyzer</h2>
+                    <p>Plan your future semesters! Set your target CGPA and discover what grades you need in your current courses to achieve your goals.</p>
+                    <div class="btn">Open Analyzer</div>
+                </a>
+            </div>
+
+            <div class="features">
+                <h3>✨ Key Features</h3>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="icon">💾</div>
+                        <h4>Auto-Save</h4>
+                        <p>Your data is automatically saved in your browser</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon">🔗</div>
+                        <h4>Linked Tools</h4>
+                        <p>Seamlessly switch between calculator and analyzer</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon">📊</div>
+                        <h4>Official Policy</h4>
+                        <p>Based on NSU's official grading system</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="icon">📱</div>
+                        <h4>Mobile Friendly</h4>
+                        <p>Works perfectly on all devices</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h4>📌 How to Use</h4>
+                <p><strong>Step 1:</strong> Start with the <strong>Calculator</strong> to enter all your completed courses and calculate your current CGPA.</p>
+                <p style="margin-top: 10px;"><strong>Step 2:</strong> Go to the <strong>Analyzer</strong> to set your target CGPA and see what grades you need in your current semester to achieve your goal.</p>
+                <p style="margin-top: 10px;"><strong>Tip:</strong> The Analyzer can automatically import your CGPA from the Calculator - no need to enter it twice!</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>NSU CGPA Tools - Helping Students Plan Their Academic Success</p>
+            <p style="margin-top: 5px; opacity: 0.8;">Based on North South University Official Grading Policy</p>
+        </div>
+    </div>
+</body>
+</html>
