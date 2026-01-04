@@ -1,1 +1,1 @@
-![NSU CGPA Calculator Cover page](https://github.com/user-attachments/assets/38a3f1ab-7004-4f3c-9ea1-0e4fdc1fd34d)
+![NSU CGPA Calculator Cover page final](https://github.com/user-attachments/assets/275ddb65-ef36-4019-82f6-2c72d318ca9f)
